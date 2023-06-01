@@ -49,6 +49,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Vector3D start;
 	Vector3D end;
 
+	int gridDivision = 10;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -72,7 +74,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		pointSphere->Update();
 		closestPointSphere->Update();
 
-		grid->Update(10);
+		grid->Update(gridDivision);
 
 		///
 		/// ↑更新処理ここまで
