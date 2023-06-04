@@ -19,8 +19,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Novice::Initialize(kWindowTitle.c_str(), 1280, 720);
 
 	// キー入力結果を受け取る箱
-	std::array<char, 256> keys = { 0 };
-	std::array<char, 256> preKeys = { 0 };
+	std::array<int8_t, 256> keys = { 0 };
+	std::array<int8_t, 256> preKeys = { 0 };
 
 	auto camera = std::make_unique<Camera>();
 	assert(camera);
@@ -59,7 +59,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// キー入力を受け取る
 		std::copy(keys.begin(), keys.end(), preKeys.begin());
-		Novice::GetHitKeyStateAll(keys.data());
+		Novice::GetHitKeyStateAll((char*)keys.data());
 
 		///
 		/// ↓更新処理ここから
