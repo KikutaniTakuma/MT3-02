@@ -14,13 +14,13 @@ void Grid::Update(int32_t division) {
 	if (localPosX.empty() || localPosX.size() != static_cast<size_t>(division - 1)) {
 		localPosX.clear();
 		for (int32_t x = 0; x <= division; ++x) {
-			localPosX.push_back(static_cast<float>(division) / -2.0f + static_cast<float>(x));
+			localPosX.push_back((static_cast<float>(division) / -2.0f + static_cast<float>(x)) / static_cast<float>(division));
 		}
 	}
 	if (localPosZ.empty() || localPosX.size() != static_cast<size_t>(division - 1)) {
 		localPosZ.clear();
 		for (int32_t z = 0; z<=division; z++) {
-			localPosZ.push_back(static_cast<float>(division) / 2.0f - static_cast<float>(z));
+			localPosZ.push_back((static_cast<float>(division) / 2.0f - static_cast<float>(z)) / static_cast<float>(division));
 		}
 	}
 

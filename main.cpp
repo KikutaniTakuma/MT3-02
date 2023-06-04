@@ -44,12 +44,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	closestPointSphere->translation = closestPoint;
 
 	auto grid = std::make_unique<Grid>();
-	grid->scalar = { 0.4f,0.0f,0.4f };
+	grid->scalar = { 4.0f,0.0f,4.0f };
 
 	Vector3D start;
 	Vector3D end;
 
-	int gridDivision = 10;
+	int gridDivision = 20;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {

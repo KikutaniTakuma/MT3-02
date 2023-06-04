@@ -53,7 +53,7 @@ public:
 	bool operator==(const Mat4x4& mat) const;
 	bool operator!=(const Mat4x4& mat) const;
 
-	inline std::array<std::array<float, 4>, 4> get() const {
+	inline const std::array<std::array<float, 4>, 4>& get() const {
 		return m;
 	}
 
