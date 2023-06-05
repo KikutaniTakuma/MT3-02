@@ -48,12 +48,6 @@ Vector3D Vector3D::operator*=(float scalar) {
 	return *this;
 }
 
-Vector3D Vector3D::Normalize() const {
-	float nor = this->Length();
-
-	return Vector3D(x / nor, y / nor, z / nor);
-}
-
 Vector3D Vector3D::operator*(const Mat4x4& mat) const {
 	Vector3D result;
 
@@ -77,6 +71,12 @@ Vector3D& Vector3D::operator*=(const Mat4x4& mat) {
 
 float Vector3D::Length() const {
 	return sqrtf(x * x + y * y + z * z);
+}
+
+Vector3D Vector3D::Normalize() const {
+	float nor = this->Length();
+
+	return Vector3D(x / nor, y / nor, z / nor);
 }
 
 float Vector3D::Dot(const Vector3D& vec) const {
