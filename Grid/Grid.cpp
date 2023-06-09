@@ -64,3 +64,32 @@ void Grid::Draw(const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix
 		}
 	}
 }
+
+Vector3D Perpendicular(const Vector3D& vec) {
+	if (vec.x != 0.0f || vec.y != 0.0f) {
+		return Vector3D(-vec.y, vec.x, 0.0f);
+	}
+	return Vector3D(0.0f, -vec.z, vec.y);
+}
+
+void DrawPlane(const Plane& plane, const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix, uint32_t color) {
+	Vector3D center = plane.normal * plane.distance;
+	Vector3D perpendiculars[4];
+
+	perpendiculars[0] = Perpendicular(plane.normal).Normalize();
+	perpendiculars[1] = { -perpendiculars[0].x, -perpendiculars[0].y,-perpendiculars[0].z };
+	perpendiculars[2] = plane.normal.Cross(perpendiculars[0]);
+	perpendiculars[3] = { -perpendiculars[2].x, -perpendiculars[2].y,-perpendiculars[2].z };
+
+	Vector3D points[4];
+	for (int32_t index = 0; index < 4; ++index) {
+		Vector3D extend = perpendiculars[index] * 2.0f;
+		Vector3D point = center + extend;
+		points[index] = point * viewProjectionMatrix * viewPortMatrix;
+	}
+
+	Novice::DrawLine(static_cast<int>(points[0].x), static_cast<int>(points[0].y), static_cast<int>(points[2].x), static_cast<int>(points[2].y), color);
+	Novice::DrawLine(static_cast<int>(points[1].x), static_cast<int>(points[1].y), static_cast<int>(points[2].x), static_cast<int>(points[2].y), color);
+	Novice::DrawLine(static_cast<int>(points[1].x), static_cast<int>(points[1].y), static_cast<int>(points[3].x), static_cast<int>(points[3].y), color);
+	Novice::DrawLine(static_cast<int>(points[3].x), static_cast<int>(points[3].y), static_cast<int>(points[0].x), static_cast<int>(points[0].y), color);
+}

@@ -29,6 +29,9 @@
     <Filter Include="Grid">
       <UniqueIdentifier>{4ce49fe6-ee09-4792-b690-cbe45900f930}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mouse">
+      <UniqueIdentifier>{1277e4ae-ac1c-4a5d-b642-caa37d30cd36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -64,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="Grid\Grid.cpp">
       <Filter>Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse\Mouse.cpp">
+      <Filter>Mouse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="Grid\Grid.h">
       <Filter>Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse\Mouse.h">
+      <Filter>Mouse</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

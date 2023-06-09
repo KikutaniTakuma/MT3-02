@@ -10,6 +10,7 @@
 #include "Camera/Camera.h"
 #include "Sphere/Sphere.h"
 #include "Grid/Grid.h"
+#include "Mouse/Mouse.h"
 
 const std::string kWindowTitle = "LE2A_04_キクタニ_タクマ_タイトル";
 
@@ -29,22 +30,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	camera->rotate = { 0.26f,0.0f,0.0f };
 	camera->scale = { 1.0f,1.0f,1.0f };
 
-	auto sphere = std::array<std::unique_ptr<Sphere>,2>();
-	for (auto& i : sphere) {
-		i = std::make_unique<Sphere>();
-		assert(i);
-	}
-	sphere[0]->radius = 0.3f;
-	sphere[0]->translation = {0.65f, 0.0f, 1.0f};
+	auto sphere = std::make_unique<Sphere>();
+	sphere->radius = 0.5f;
 
-	sphere[1]->radius = 0.5f;
+	Plane plane{ Vector3D(0.0f,1.0f,0.0f), 1.0f };
+
 	uint32_t sphreColor = WHITE;
 
 	auto grid = std::make_unique<Grid>();
 	grid->scalar = { 4.0f,0.0f,4.0f };
-
-	Vector3D start;
-	Vector3D end;
 
 	int gridDivision = 10;
 
@@ -57,25 +51,26 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// キー入力を受け取る
 		std::copy(keys.begin(), keys.end(), preKeys.begin());
 		Novice::GetHitKeyStateAll((char*)keys.data());
+		Mouse::Input();
 
 		///
 		/// ↓更新処理ここから
 		///
+		
+		
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("Camera pos", &camera->pos.x, 0.01f);
 		ImGui::DragFloat3("Camera rotate", &camera->rotate.x, 0.01f);
 		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
-		ImGui::DragFloat3("Sphere pos[0]", &sphere[0]->translation.x, 0.01f);
-		ImGui::DragFloat("Sphere scale[0]", &sphere[0]->radius, 0.01f);
-		ImGui::DragFloat3("Sphere pos[1]", &sphere[1]->translation.x, 0.01f);
-		ImGui::DragFloat("Sphere scale[1]", &sphere[1]->radius, 0.01f);
+		ImGui::DragFloat3("Sphere pos", &sphere->translation.x, 0.01f);
+		ImGui::DragFloat("Sphere scale", &sphere->radius, 0.01f);
+		ImGui::DragFloat3("Plane Normal", &plane.normal.x, 0.01f);
+		ImGui::DragFloat("Plane distance", &plane.distance, 0.01f);
 		ImGui::End();
+		plane.normal = plane.normal.Normalize();
 
-		for (auto& i : sphere) {
-			i->Update();
-		}
-
-		if (sphere[1]->IsCollision((*sphere[0]))) {
+		sphere->Update();
+		if (sphere->IsCollision(plane)) {
 			sphreColor = RED;
 		}
 		else {
@@ -95,13 +90,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		grid->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
 
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
+		DrawPlane(plane, camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
 
-		sphere[0]->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
-
-		sphere[1]->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), sphreColor);
-
-
+		sphere->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), sphreColor);
 
 		///
 		/// ↑描画処理ここまで

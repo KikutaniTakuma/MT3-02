@@ -23,3 +23,10 @@ private:
 
 	Mat4x4 worldMat;
 };
+
+struct Plane {
+	Vector3D normal;
+	float distance;
+};
+
+void DrawPlane(const Plane& plane, const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix, uint32_t color);

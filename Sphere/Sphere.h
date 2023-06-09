@@ -35,4 +35,5 @@ private:
 
 public:
 	bool IsCollision(const Sphere& sphere) const;
+	bool IsCollision(const struct Plane& plane) const;
 };

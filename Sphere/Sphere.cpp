@@ -1,4 +1,5 @@
 #include "Sphere/Sphere.h"
+#include "Grid/Grid.h"
 #include <Novice.h>
 #include <numbers>
 #include <cassert>
@@ -87,4 +88,10 @@ bool Sphere::IsCollision(const Sphere& sphere) const {
 	float distance = (sphere.translation - this->translation).Length();
 
 	return distance < sphere.radius + this->radius ? true : false;
+}
+
+bool Sphere::IsCollision(const Plane& plane) const {
+	float distance = plane.normal.Dot(translation) - plane.distance;
+
+	return std::abs(distance) < this->radius ? true : false;
 }
