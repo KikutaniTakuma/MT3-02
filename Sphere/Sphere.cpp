@@ -7,49 +7,50 @@ Sphere::Sphere() :
 	radius(1.0f),
 	loaclVec(radius,0.0f,0.0f),
 	scale(1.0f,1.0f,1.0f),
-	rotate(0.0f,0.0f,0.0f),
-	translation(0.0f,0.0f,10.0f),
+	worldRotate(0.0f, 0.0f, 0.0f),
+	localRotate(0.0f,0.0f,0.0f),
+	translation(0.0f,0.0f,0.0f),
 	worldMat(),
 	kDivision(10),
-	spherePosList(std::make_unique<std::vector<std::vector<Vector3D>>>(0))
+	sphereLocalPosList(std::make_unique<std::vector<std::vector<Vector3D>>>(0)),
+	sphereWorldPosList(std::make_unique<std::vector<std::vector<Vector3D>>>(0))
 {
-	assert(spherePosList);
+	assert(sphereLocalPosList);
+	assert(sphereWorldPosList);
+
+	Mat4x4 localRotateMatrix;
 
 	for (int y = 0; y <= kDivision; y++) {
-		rotate.z = -std::numbers::pi_v<float> / 2.0f;
-		spherePosList->push_back(std::vector<Vector3D>(0));
+		localRotate.z = -std::numbers::pi_v<float> / 2.0f;
+		sphereLocalPosList->push_back(std::vector<Vector3D>(0));
 		for (int z = 0; z <= kDivision; z++) {
-			worldMat = MakeMatrixRotateZ(rotate.z) * MakeMatrixRotateY(rotate.y) * MakeMatrixAffin(scale, worldRoate, translation);
-			spherePosList->rbegin()->push_back(loaclVec * worldMat);
-			rotate.z += (std::numbers::pi_v<float> / static_cast<float>(kDivision));
+			localRotateMatrix = MakeMatrixRotateZ(localRotate.z) * MakeMatrixRotateY(localRotate.y);
+			sphereLocalPosList->rbegin()->push_back(loaclVec * localRotateMatrix);
+			localRotate.z += (std::numbers::pi_v<float> / static_cast<float>(kDivision));
 		}
 
-		rotate.y += (std::numbers::pi_v<float> / static_cast<float>(kDivision)) * 2.0f;
+		localRotate.y += (std::numbers::pi_v<float> / static_cast<float>(kDivision)) * 2.0f;
+	}
+	sphereWorldPosList->resize(sphereLocalPosList->size());
+	auto localStart = sphereLocalPosList->begin();
+	for (auto& i : *sphereWorldPosList) {
+		i.resize(localStart->size());
+		localStart++;
 	}
 	
 }
 
 Sphere::~Sphere() {
-	spherePosList.reset();
 }
 
 
 void Sphere::Update() {
-	spherePosList->clear();
-	rotate = Vector3D();
-
-	loaclVec.x = radius;
-
-	for (int y = 0; y <= kDivision; y++) {
-		rotate.z = -std::numbers::pi_v<float> / 2.0f;
-		spherePosList->push_back(std::vector<Vector3D>(0));
-		for (int z = 0; z <= kDivision; z++) {
-			worldMat = MakeMatrixRotateZ(rotate.z) * MakeMatrixRotateY(rotate.y) * MakeMatrixAffin(scale, worldRoate, translation);
-			spherePosList->rbegin()->push_back(loaclVec * worldMat);
-			rotate.z += (std::numbers::pi_v<float> / static_cast<float>(kDivision));
+	scale = { radius,radius,radius };
+	worldMat.Affin(scale, worldRotate, translation);
+	for (size_t i = 0; i < sphereWorldPosList->size() && i < sphereLocalPosList->size();i++) {
+		for (size_t j = 0; j < (*sphereWorldPosList)[i].size() && j < (*sphereLocalPosList)[i].size(); j++) {
+			(*sphereWorldPosList)[i][j] = (*sphereLocalPosList)[i][j] * worldMat;
 		}
-
-		rotate.y += (std::numbers::pi_v<float> / static_cast<float>(kDivision)) * 2.0f;
 	}
 }
 
@@ -59,8 +60,8 @@ void Sphere::Draw(const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortmatr
 	
 	std::vector<Vector3D> preHarfCircle;
 	std::vector<Vector3D>::iterator preItr;
-	for (auto i = spherePosList->begin(); i != spherePosList->end(); ++i) {
-		if (i != spherePosList->begin()) {
+	for (auto i = sphereWorldPosList->begin(); i != sphereWorldPosList->end(); ++i) {
+		if (i != sphereWorldPosList->begin()) {
 			preItr = preHarfCircle.begin();
 		}
 
@@ -70,7 +71,7 @@ void Sphere::Draw(const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortmatr
 				Vector3D endPos = *(j)*vpvpMat;
 				Novice::DrawLine(static_cast<int>(startPos.x), static_cast<int>(startPos.y), static_cast<int>(endPos.x), static_cast<int>(endPos.y), color);
 
-				if (i != spherePosList->begin()) {
+				if (i != sphereWorldPosList->begin()) {
 					preItr++;
 					Vector3D prePos = (*preItr) * vpvpMat;
 					Novice::DrawLine(static_cast<int>(prePos.x), static_cast<int>(prePos.y), static_cast<int>(endPos.x), static_cast<int>(endPos.y), color);
@@ -79,4 +80,11 @@ void Sphere::Draw(const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortmatr
 		}
 		preHarfCircle = (*i);
 	}
+}
+
+
+bool Sphere::IsCollision(const Sphere& sphere) const {
+	float distance = (sphere.translation - this->translation).Length();
+
+	return distance < sphere.radius + this->radius ? true : false;
 }

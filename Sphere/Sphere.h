@@ -18,18 +18,21 @@ public:
 public:
 	float radius;
 	Vector3D translation;
-	Vector3D worldRoate;
+	Vector3D worldRotate;
 
 private:
 	Vector3D loaclVec;
 
 	Vector3D scale;
-	Vector3D rotate;
+	Vector3D localRotate;
 
 	Mat4x4 worldMat;
 
 	const int kDivision;
 
-	std::unique_ptr<std::vector<std::vector<Vector3D>>> spherePosList;
+	std::unique_ptr<std::vector<std::vector<Vector3D>>> sphereLocalPosList;
+	std::unique_ptr<std::vector<std::vector<Vector3D>>> sphereWorldPosList;
 
+public:
+	bool IsCollision(const Sphere& sphere) const;
 };

@@ -29,19 +29,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	camera->rotate = { 0.26f,0.0f,0.0f };
 	camera->scale = { 1.0f,1.0f,1.0f };
 
-	Segment segment{ {-2.0f,-1.0f,0.0f},{3.0f, 2.0f,2.0f} };
-	Vector3D point{ -1.5f,0.6f,0.6f };
+	auto sphere = std::array<std::unique_ptr<Sphere>,2>();
+	for (auto& i : sphere) {
+		i = std::make_unique<Sphere>();
+		assert(i);
+	}
+	sphere[0]->radius = 0.3f;
+	sphere[0]->translation = {0.65f, 0.0f, 1.0f};
 
-	Vector3D project = Project(point - segment.origin, segment.diff);
-	Vector3D closestPoint = ClosestPoint(point, segment);
-
-	auto pointSphere = std::make_unique<Sphere>();
-	pointSphere->radius = 0.01f;
-	pointSphere->translation = point;
-
-	auto closestPointSphere = std::make_unique<Sphere>();
-	closestPointSphere->radius = 0.01f;
-	closestPointSphere->translation = closestPoint;
+	sphere[1]->radius = 0.5f;
+	uint32_t sphreColor = WHITE;
 
 	auto grid = std::make_unique<Grid>();
 	grid->scalar = { 4.0f,0.0f,4.0f };
@@ -49,7 +46,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Vector3D start;
 	Vector3D end;
 
-	int gridDivision = 20;
+	int gridDivision = 10;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -65,14 +62,25 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		/// ↓更新処理ここから
 		///
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("Point", &point.x, 0.01f);
-		ImGui::DragFloat3("Segment origin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("Segment doff", &segment.diff.x, 0.01f);
-		ImGui::DragFloat3("Project", &project.x, 0.01f);
+		ImGui::DragFloat3("Camera pos", &camera->pos.x, 0.01f);
+		ImGui::DragFloat3("Camera rotate", &camera->rotate.x, 0.01f);
+		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
+		ImGui::DragFloat3("Sphere pos[0]", &sphere[0]->translation.x, 0.01f);
+		ImGui::DragFloat("Sphere scale[0]", &sphere[0]->radius, 0.01f);
+		ImGui::DragFloat3("Sphere pos[1]", &sphere[1]->translation.x, 0.01f);
+		ImGui::DragFloat("Sphere scale[1]", &sphere[1]->radius, 0.01f);
 		ImGui::End();
 
-		pointSphere->Update();
-		closestPointSphere->Update();
+		for (auto& i : sphere) {
+			i->Update();
+		}
+
+		if (sphere[1]->IsCollision((*sphere[0]))) {
+			sphreColor = RED;
+		}
+		else {
+			sphreColor = WHITE;
+		}
 
 		grid->Update(gridDivision);
 
@@ -87,14 +95,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		grid->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
 
-		start = segment.origin * camera->getViewProjectionMatrix() * camera->getViewPortMatrix();
-		end = (segment.origin + segment.diff) * camera->getViewProjectionMatrix() * camera->getViewPortMatrix();
-
 		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
 
+		sphere[0]->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
 
-		pointSphere->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), RED);
-		closestPointSphere->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xff);
+		sphere[1]->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), sphreColor);
 
 
 
