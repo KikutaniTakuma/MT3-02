@@ -50,7 +50,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 		/// ↓更新処理ここから
 		///
-
+		ImGui::Begin("Window");
+		ImGui::DragFloat3("Camera pos", &camera->pos.x, 0.01f);
+		ImGui::DragFloat3("Camera rotate", &camera->rotate.x, 0.01f);
+		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
+		ImGui::End();
 		wave->Update(gridDivision);
 
 		///
