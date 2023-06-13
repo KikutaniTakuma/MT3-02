@@ -34,7 +34,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	auto wave = std::make_unique<Wave>();
 	wave->scalar = { 3.0f,1.0f,3.0f };
 
-	int gridDivision = 10;
+	int gridDivision = 20;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -66,7 +66,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 		camera->Update();
 
-		wave->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
+		Novice::DrawBox(0, 0, 1280, 720, 0.0f, 0xff, kFillModeSolid);
+
+		wave->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0x3333ffff);
 
 		///
 		/// ↑描画処理ここまで

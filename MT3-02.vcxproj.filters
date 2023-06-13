@@ -32,6 +32,9 @@
     <Filter Include="Mouse">
       <UniqueIdentifier>{1277e4ae-ac1c-4a5d-b642-caa37d30cd36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Wave">
+      <UniqueIdentifier>{48057867-8732-4772-a72d-377acbf64437}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -70,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="Mouse\Mouse.cpp">
       <Filter>Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="Wave.cpp">
+      <Filter>Wave</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="Mouse\Mouse.h">
       <Filter>Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="Wave.h">
+      <Filter>Wave</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
