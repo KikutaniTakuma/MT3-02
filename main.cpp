@@ -11,6 +11,7 @@
 #include "Sphere/Sphere.h"
 #include "Grid/Grid.h"
 #include "Mouse/Mouse.h"
+#include "Wave.h"
 
 const std::string kWindowTitle = "LE2A_04_キクタニ_タクマ_タイトル";
 
@@ -30,15 +31,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	camera->rotate = { 0.26f,0.0f,0.0f };
 	camera->scale = { 1.0f,1.0f,1.0f };
 
-	auto sphere = std::make_unique<Sphere>();
-	sphere->radius = 0.5f;
-
-	Plane plane{ Vector3D(0.0f,1.0f,0.0f), 1.0f };
-
-	uint32_t sphreColor = WHITE;
-
-	auto grid = std::make_unique<Grid>();
-	grid->scalar = { 4.0f,0.0f,4.0f };
+	auto wave = std::make_unique<Wave>();
+	wave->scalar = { 3.0f,1.0f,3.0f };
 
 	int gridDivision = 10;
 
@@ -56,28 +50,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 		/// ↓更新処理ここから
 		///
-		
-		
-		ImGui::Begin("Window");
-		ImGui::DragFloat3("Camera pos", &camera->pos.x, 0.01f);
-		ImGui::DragFloat3("Camera rotate", &camera->rotate.x, 0.01f);
-		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
-		ImGui::DragFloat3("Sphere pos", &sphere->translation.x, 0.01f);
-		ImGui::DragFloat("Sphere scale", &sphere->radius, 0.01f);
-		ImGui::DragFloat3("Plane Normal", &plane.normal.x, 0.01f);
-		ImGui::DragFloat("Plane distance", &plane.distance, 0.01f);
-		ImGui::End();
-		plane.normal = plane.normal.Normalize();
 
-		sphere->Update();
-		if (sphere->IsCollision(plane)) {
-			sphreColor = RED;
-		}
-		else {
-			sphreColor = WHITE;
-		}
-
-		grid->Update(gridDivision);
+		wave->Update(gridDivision);
 
 		///
 		/// ↑更新処理ここまで
@@ -88,11 +62,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 		camera->Update();
 
-		grid->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
-
-		DrawPlane(plane, camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
-
-		sphere->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), sphreColor);
+		wave->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
 
 		///
 		/// ↑描画処理ここまで
