@@ -23,7 +23,7 @@ void Wave::Update(int32_t division) {
 				localPos.push_back(
 					Vector3D(
 						(static_cast<float>(division) / -2.0f + static_cast<float>(x)) / static_cast<float>(division),
-						-1.0f, 
+						1.0f, 
 						(static_cast<float>(division) / 2.0f - static_cast<float>(z)) / static_cast<float>(division)
 					)
 				);
@@ -48,8 +48,13 @@ void Wave::Draw(const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix
 	Mat4x4 wave;
 
 	for (auto& i : localPos) {
-		wave = MakeMatrixScalar({ 1.0f, std::cos(i.z * 3.0f + num) * 0.125f + std::cos(i.x * 3.0f + num) * 0.125f + std::cos((i.x + i.x) * 5.0f + num) * 0.125f + std::cos((i.z + i.z) * 5.0f + num) * 0.125f, 1.0f });
-		screenPos.push_back(i * wave *  worldVpvpMatrix);
+		wave = MakeMatrixScalar({ 1.0f, 1.0f / i.y, 1.0f }) *
+			MakeMatrixScalar({ 1.0f, (std::cos(i.z * 3.0f + num) + std::cos(i.x * 3.0f + num) + std::cos((i.x + i.x) * 5.0f + num) + std::cos((i.z + i.z) * 5.0f + num)) * 0.125f, 1.0f });
+		float y = i.y;
+		Vector3D tmp = i * wave;
+		tmp.y += y - 1.0f;
+		tmp *= worldVpvpMatrix;
+		screenPos.push_back(tmp);
 	}
 
 	for (auto& i : screenPos) {
