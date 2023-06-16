@@ -93,3 +93,19 @@ void DrawPlane(const Plane& plane, const Mat4x4& viewProjectionMatrix, const Mat
 	Novice::DrawLine(static_cast<int>(points[1].x), static_cast<int>(points[1].y), static_cast<int>(points[3].x), static_cast<int>(points[3].y), color);
 	Novice::DrawLine(static_cast<int>(points[3].x), static_cast<int>(points[3].y), static_cast<int>(points[0].x), static_cast<int>(points[0].y), color);
 }
+
+bool IsCollision(const Plane& plane, const Segment& segment) {
+	Vector3D b = segment.diff - segment.origin;
+
+	float dot = b.Dot(plane.normal);
+
+	if (dot == 0.0f) { return false; };
+
+	float t = (plane.distance - segment.origin.Dot(plane.normal)) / b.Dot(plane.normal);
+
+	if (t >= 0.0f && t <= 1.0f) {
+		return true;
+	}
+
+	return false;
+}

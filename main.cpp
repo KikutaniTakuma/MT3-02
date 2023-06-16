@@ -30,17 +30,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	camera->rotate = { 0.26f,0.0f,0.0f };
 	camera->scale = { 1.0f,1.0f,1.0f };
 
-	auto sphere = std::make_unique<Sphere>();
-	sphere->radius = 0.5f;
-
 	Plane plane{ Vector3D(0.0f,1.0f,0.0f), 1.0f };
 
-	uint32_t sphreColor = WHITE;
+	uint32_t segmentColor = WHITE;
 
 	auto grid = std::make_unique<Grid>();
 	grid->scalar = { 4.0f,0.0f,4.0f };
 
 	int gridDivision = 10;
+
+	Segment segment;
+	segment.diff = { 0.0f,0.0f,0.0f };
+	segment.origin = { 0.0f,0.0f,0.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -62,19 +63,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat3("Camera pos", &camera->pos.x, 0.01f);
 		ImGui::DragFloat3("Camera rotate", &camera->rotate.x, 0.01f);
 		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
-		ImGui::DragFloat3("Sphere pos", &sphere->translation.x, 0.01f);
-		ImGui::DragFloat("Sphere scale", &sphere->radius, 0.01f);
 		ImGui::DragFloat3("Plane Normal", &plane.normal.x, 0.01f);
 		ImGui::DragFloat("Plane distance", &plane.distance, 0.01f);
+		ImGui::DragFloat3("Segment diff", &segment.diff.x, 0.01f);
+		ImGui::DragFloat3("Segment origin", &segment.origin.x, 0.01f);
 		ImGui::End();
 		plane.normal = plane.normal.Normalize();
 
-		sphere->Update();
-		if (sphere->IsCollision(plane)) {
-			sphreColor = RED;
+		if (IsCollision(plane, segment)) {
+			segmentColor = RED;
 		}
 		else {
-			sphreColor = WHITE;
+			segmentColor = WHITE;
 		}
 
 		grid->Update(gridDivision);
@@ -92,7 +92,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		DrawPlane(plane, camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
 
-		sphere->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), sphreColor);
+		Segment screenSegment = {
+			segment.origin * camera->getViewProjectionMatrix() * camera->getViewPortMatrix(),
+			segment.diff * camera->getViewProjectionMatrix() * camera->getViewPortMatrix()
+		};
+
+		Novice::DrawLine(static_cast<int>(screenSegment.origin.x), static_cast<int>(screenSegment.origin.y), static_cast<int>(screenSegment.diff.x), static_cast<int>(screenSegment.diff.y), segmentColor);
 
 		///
 		/// ↑描画処理ここまで
