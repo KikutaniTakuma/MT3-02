@@ -32,3 +32,5 @@ struct Plane {
 bool IsCollision(const Plane& plane, const Segment& segment);
 
 void DrawPlane(const Plane& plane, const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix, uint32_t color);
+
+void IsCollisionTriangle(const Vector3D& pos1, const Vector3D& pos2, const Vector3D& pos3, const Segment& segment);

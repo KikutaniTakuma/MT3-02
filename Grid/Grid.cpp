@@ -109,3 +109,12 @@ bool IsCollision(const Plane& plane, const Segment& segment) {
 
 	return false;
 }
+
+void IsCollisionTriangle(const Vector3D& pos1, const Vector3D& pos2, const Vector3D& pos3, const Segment& segment) {
+	Vector3D normal = (pos2 - pos1).Cross(pos3 - pos2).Normalize();
+
+	float distance = pos1.Dot(normal);
+
+
+
+}
