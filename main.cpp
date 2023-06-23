@@ -30,7 +30,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	camera->rotate = { 0.26f,0.0f,0.0f };
 	camera->scale = { 1.0f,1.0f,1.0f };
 
-	Plane plane{ Vector3D(0.0f,1.0f,0.0f), 1.0f };
+	Vector3D triPos1 = { -1.0f,0.0f,0.0f };
+	Vector3D triPos2 = { 0.0f,1.0f,0.0f };
+	Vector3D triPos3 = { 1.0f,0.0f,0.0f };
 
 	uint32_t segmentColor = WHITE;
 
@@ -63,14 +65,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat3("Camera pos", &camera->pos.x, 0.01f);
 		ImGui::DragFloat3("Camera rotate", &camera->rotate.x, 0.01f);
 		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
-		ImGui::DragFloat3("Plane Normal", &plane.normal.x, 0.01f);
-		ImGui::DragFloat("Plane distance", &plane.distance, 0.01f);
 		ImGui::DragFloat3("Segment diff", &segment.diff.x, 0.01f);
 		ImGui::DragFloat3("Segment origin", &segment.origin.x, 0.01f);
+		ImGui::DragFloat3("triPos1", &triPos1.x, 0.01f);
+		ImGui::DragFloat3("triPos2", &triPos2.x, 0.01f);
+		ImGui::DragFloat3("triPos3", &triPos3.x, 0.01f);
 		ImGui::End();
-		plane.normal = plane.normal.Normalize();
 
-		if (IsCollision(plane, segment)) {
+		if (IsCollisionTriangle(triPos1, triPos2, triPos3, segment)) {
 			segmentColor = RED;
 		}
 		else {
@@ -90,8 +92,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		grid->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
 
-		DrawPlane(plane, camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
-
+		DrawTriangle(triPos1, triPos2, triPos3, camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
 		Segment screenSegment = {
 			segment.origin * camera->getViewProjectionMatrix() * camera->getViewPortMatrix(),
 			segment.diff * camera->getViewProjectionMatrix() * camera->getViewPortMatrix()
