@@ -46,7 +46,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	model->LoadObj("Model/Cube.obj");
 	model->scale = { 0.5f,0.5f,0.5f };
 	auto model2 = std::make_unique<MyModel>(*model);
-	model2->pos = { 2.0f,0.0f,2.0f };
+	model2->pos = { 2.0f,0.0f,0.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
