@@ -110,6 +110,7 @@
     <ClCompile Include="Grid\Grid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mat4x4\Mat4x4.cpp" />
+    <ClCompile Include="Model\MyModel.cpp" />
     <ClCompile Include="Mouse\Mouse.cpp" />
     <ClCompile Include="Sphere\Sphere.cpp" />
     <ClCompile Include="Vector3D\Vector3D.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Grid\Grid.h" />
     <ClInclude Include="Mat4x4\Mat4x4.h" />
+    <ClInclude Include="Model\MyModel.h" />
     <ClInclude Include="Mouse\Mouse.h" />
     <ClInclude Include="Sphere\Sphere.h" />
     <ClInclude Include="Vector3D\Vector3D.h" />

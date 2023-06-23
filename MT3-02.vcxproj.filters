@@ -32,6 +32,9 @@
     <Filter Include="Mouse">
       <UniqueIdentifier>{1277e4ae-ac1c-4a5d-b642-caa37d30cd36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{9d50c346-a1ad-4e5b-8886-4969e1676428}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -70,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="Mouse\Mouse.cpp">
       <Filter>Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\MyModel.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="Mouse\Mouse.h">
       <Filter>Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\MyModel.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

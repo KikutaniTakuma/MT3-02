@@ -11,6 +11,7 @@
 #include "Sphere/Sphere.h"
 #include "Grid/Grid.h"
 #include "Mouse/Mouse.h"
+#include "Model/MyModel.h"
 
 const std::string kWindowTitle = "LE2A_04_キクタニ_タクマ_タイトル";
 
@@ -30,11 +31,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	camera->rotate = { 0.26f,0.0f,0.0f };
 	camera->scale = { 1.0f,1.0f,1.0f };
 
-	Vector3D triPos1 = { -1.0f,0.0f,0.0f };
-	Vector3D triPos2 = { 0.0f,1.0f,0.0f };
-	Vector3D triPos3 = { 1.0f,0.0f,0.0f };
-
-	uint32_t segmentColor = WHITE;
+	uint32_t cubeColor = WHITE;
 
 	auto grid = std::make_unique<Grid>();
 	grid->scalar = { 4.0f,0.0f,4.0f };
@@ -44,6 +41,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Segment segment;
 	segment.diff = { 0.0f,0.0f,0.0f };
 	segment.origin = { 0.0f,0.0f,0.0f };
+
+	auto model = std::make_unique<MyModel>();
+	model->LoadObj("Model/Cube.obj");
+	model->scale = { 0.5f,0.5f,0.5f };
+	auto model2 = std::make_unique<MyModel>(*model);
+	model2->pos = { 2.0f,0.0f,2.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -67,19 +70,22 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
 		ImGui::DragFloat3("Segment diff", &segment.diff.x, 0.01f);
 		ImGui::DragFloat3("Segment origin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("triPos1", &triPos1.x, 0.01f);
-		ImGui::DragFloat3("triPos2", &triPos2.x, 0.01f);
-		ImGui::DragFloat3("triPos3", &triPos3.x, 0.01f);
+		ImGui::DragFloat3("Model pos", &model->pos.x, 0.01f);
+		ImGui::DragFloat3("Model rotaion", &model->rotation.x, 0.01f);
+		ImGui::DragFloat3("Model scale", &model->scale.x, 0.01f);
 		ImGui::End();
 
-		if (IsCollisionTriangle(triPos1, triPos2, triPos3, segment)) {
-			segmentColor = RED;
+		grid->Update(gridDivision);
+
+		model->WorldMatUpdate();
+		model2->WorldMatUpdate();
+
+		if (model->IsCollision(*model2)) {
+			cubeColor = RED;
 		}
 		else {
-			segmentColor = WHITE;
+			cubeColor = WHITE;
 		}
-
-		grid->Update(gridDivision);
 
 		///
 		/// ↑更新処理ここまで
@@ -92,13 +98,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		grid->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
 
-		DrawTriangle(triPos1, triPos2, triPos3, camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
+		model->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), cubeColor);
+		model2->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
+		
 		Segment screenSegment = {
 			segment.origin * camera->getViewProjectionMatrix() * camera->getViewPortMatrix(),
 			segment.diff * camera->getViewProjectionMatrix() * camera->getViewPortMatrix()
 		};
 
-		Novice::DrawLine(static_cast<int>(screenSegment.origin.x), static_cast<int>(screenSegment.origin.y), static_cast<int>(screenSegment.diff.x), static_cast<int>(screenSegment.diff.y), segmentColor);
+		Novice::DrawLine(static_cast<int>(screenSegment.origin.x), static_cast<int>(screenSegment.origin.y), static_cast<int>(screenSegment.diff.x), static_cast<int>(screenSegment.diff.y), cubeColor);
 
 		///
 		/// ↑描画処理ここまで
