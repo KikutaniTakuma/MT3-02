@@ -19,6 +19,7 @@ public:
 	void WorldMatUpdate();
 
 	bool IsCollision(const MyModel& model) const;
+	bool IsCollision(const class Sphere& sphere) const;
 
 	void Draw(const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix, uint32_t color);
 

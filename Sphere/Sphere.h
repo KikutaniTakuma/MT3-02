@@ -6,6 +6,8 @@
 #include <memory>
 
 class Sphere {
+	friend class MyModel;
+
 public:
 	Sphere();
 	~Sphere();

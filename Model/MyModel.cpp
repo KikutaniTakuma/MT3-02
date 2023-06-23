@@ -1,5 +1,6 @@
 #include "MyModel.h"
 #include "Novice.h"
+#include "Sphere/Sphere.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -15,7 +16,12 @@ MyModel::MyModel():
 	index(0),
 	maxLocalPos(),
 	minLocalPos()
-{}
+{
+	vertex.reserve(0);
+	vertex.resize(0);
+	index.reserve(0);
+	index.resize(0);
+}
 
 void MyModel::LoadObj(const std::string& fileName) {
 	std::ifstream objFile(fileName);
@@ -32,7 +38,7 @@ void MyModel::LoadObj(const std::string& fileName) {
 				while (getline(line, buff, ' '))
 				{
 					if (std::any_of(buff.cbegin(), buff.cend(), isdigit)) {
-						posBuf.push_back(std::stof(buff));
+						posBuf.emplace_back(std::stof(buff));
 					}
 				}
 				if (posBuf.size() == 3) {
@@ -56,7 +62,7 @@ void MyModel::LoadObj(const std::string& fileName) {
 						minLocalPos.z = posBuf[2];
 					}
 
-					vertex.push_back(Vector3D(posBuf[0], posBuf[1], posBuf[2]));
+					vertex.emplace_back(Vector3D(posBuf[0], posBuf[1], posBuf[2]));
 				}
 			}
 			else if (lineBuf.find("f") != std::string::npos) {
@@ -76,7 +82,7 @@ void MyModel::LoadObj(const std::string& fileName) {
 						}
 					}
 					if (!num[0].empty()) {
-						index.push_back(static_cast<uint32_t>(std::stoi(num[0])) - 1u);
+						index.emplace_back(static_cast<uint32_t>(std::stoi(num[0])) - 1u);
 					}
 				}
 			}
@@ -90,10 +96,10 @@ void MyModel::WorldMatUpdate() {
 }
 
 bool MyModel::IsCollision(const MyModel& model) const {
-	Vector3D worldMax = maxLocalPos * worldMat;
-	Vector3D worldMin = minLocalPos * worldMat;
-	Vector3D worldMax2 = model.maxLocalPos * model.worldMat;
-	Vector3D worldMin2 = model.minLocalPos * model.worldMat;
+	Vector3D worldMax = maxLocalPos * MakeMatrixAffin(scale, Vector3D(), pos);
+	Vector3D worldMin = minLocalPos * MakeMatrixAffin(scale, Vector3D(), pos);
+	Vector3D worldMax2 = model.maxLocalPos * MakeMatrixAffin(model.scale, Vector3D(), model.pos);
+	Vector3D worldMin2 = model.minLocalPos * MakeMatrixAffin(model.scale, Vector3D(), model.pos);
 
 	if (
 		(worldMin.x <= worldMax2.x && worldMax.x >= worldMin2.x) &&
@@ -105,6 +111,21 @@ bool MyModel::IsCollision(const MyModel& model) const {
 	}
 
 	return false;
+}
+
+bool MyModel::IsCollision(const Sphere& sphere) const {
+	Vector3D worldMax = maxLocalPos * MakeMatrixAffin(scale, Vector3D(), pos);
+	Vector3D worldMin = minLocalPos * MakeMatrixAffin(scale, Vector3D(), pos);
+
+	Vector3D closestPosint = {
+		std::clamp(sphere.translation.x, worldMin.x, worldMax.x),
+		std::clamp(sphere.translation.y, worldMin.y, worldMax.y),
+		std::clamp(sphere.translation.z, worldMin.z, worldMax.z),
+	};
+
+	float distance = (closestPosint - sphere.translation).Length();
+
+	return distance < sphere.radius ? true : false;
 }
 
 void MyModel::Draw(const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix, uint32_t color) {
