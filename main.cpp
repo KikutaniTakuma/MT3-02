@@ -45,8 +45,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	auto model = std::make_unique<MyModel>();
 	model->LoadObj("Model/Cube.obj");
 	model->scale = { 0.5f,0.5f,0.5f };
-	auto sphere = std::make_unique<Sphere>();
-	sphere->translation = { 2.0f,0.0f,0.0f };
+	auto model2 = std::make_unique<MyModel>(*model);
+	model2->pos = { 2.0f,0.0f,0.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -78,9 +78,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		grid->Update(gridDivision);
 
 		model->WorldMatUpdate();
-		sphere->Update();
+		model2->WorldMatUpdate();
 
-		if (model->IsCollision(*sphere)) {
+		if (model->IsCollision(*model2)) {
 			cubeColor = RED;
 		}
 		else {
@@ -99,7 +99,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		grid->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
 
 		model->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), cubeColor);
-		sphere->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
+		model2->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), WHITE);
 		
 		Segment screenSegment = {
 			segment.origin * camera->getViewProjectionMatrix() * camera->getViewPortMatrix(),
