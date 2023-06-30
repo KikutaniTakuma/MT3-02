@@ -29,7 +29,7 @@ struct Plane {
 	float distance;
 };
 
-bool IsCollision(const Plane& plane, const Segment& segment);
+bool IsCollisioPlaneSegment(const Plane& plane, const Segment& segment);
 
 void DrawPlane(const Plane& plane, const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix, uint32_t color);
 

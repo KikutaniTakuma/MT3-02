@@ -31,6 +31,7 @@ public:
 	Vector3D pos;
 	Vector3D scale;
 	Vector3D rotate;
+	Vector3D moveRotate;
 
 	float fovY;
 	float nearClip;

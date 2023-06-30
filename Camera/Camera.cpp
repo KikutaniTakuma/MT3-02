@@ -18,6 +18,7 @@ Camera::Camera():
 
 void Camera::Update() {
 	viewMatrix.Affin(scale, rotate, pos);
+	viewMatrix *= MakeMatrixAffin(Vector3D(1.0f, 1.0f, 1.0f), moveRotate, Vector3D());
 	viewMatrix.Inverse();
 
 	projectionMatrix.PerspectiveFov(fovY, static_cast<float>(windowWidth) / static_cast<float>(windowHeight), nearClip, farClip);

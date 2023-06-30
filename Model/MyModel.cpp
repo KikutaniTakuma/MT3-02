@@ -1,6 +1,7 @@
 #include "MyModel.h"
 #include "Novice.h"
 #include "Sphere/Sphere.h"
+#include "Grid/Grid.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -17,10 +18,6 @@ MyModel::MyModel():
 	maxLocalPos(),
 	minLocalPos()
 {
-	vertex.reserve(0);
-	vertex.resize(0);
-	index.reserve(0);
-	index.resize(0);
 }
 
 void MyModel::LoadObj(const std::string& fileName) {
@@ -126,6 +123,17 @@ bool MyModel::IsCollision(const Sphere& sphere) const {
 	float distance = (closestPosint - sphere.translation).Length();
 
 	return distance < sphere.radius ? true : false;
+}
+
+bool MyModel::IsCollision(const Segment& segment) const {
+	for (size_t i = 0; i < index.size();) {
+		if (IsCollisionTriangle(vertex[index[i]] * worldMat, vertex[index[i+1]] * worldMat, vertex[index[i+2]] * worldMat, segment)) {
+			return true;
+		}
+		i += 3;
+	}
+
+	return false;
 }
 
 void MyModel::Draw(const Mat4x4& viewProjectionMatrix, const Mat4x4& viewPortMatrix, uint32_t color) {

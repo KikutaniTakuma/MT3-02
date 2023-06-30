@@ -94,7 +94,7 @@ void DrawPlane(const Plane& plane, const Mat4x4& viewProjectionMatrix, const Mat
 	Novice::DrawLine(static_cast<int>(points[3].x), static_cast<int>(points[3].y), static_cast<int>(points[0].x), static_cast<int>(points[0].y), color);
 }
 
-bool IsCollision(const Plane& plane, const Segment& segment) {
+bool IsCollisioPlaneSegment(const Plane& plane, const Segment& segment) {
 	Vector3D b = segment.diff - segment.origin;
 
 	float dot = b.Dot(plane.normal);
@@ -110,10 +110,10 @@ bool IsCollision(const Plane& plane, const Segment& segment) {
 	return false;
 }
 
-bool IsCollisionTriangle(const Vector3D& pos1, const Vector3D& pos2, const Vector3D& pos3, const Segment& segment) {
-	Vector3D normal = (pos2 - pos1).Cross(pos3 - pos2).Normalize();
+bool IsCollisionTriangle(const Vector3D& pos0, const Vector3D& pos1, const Vector3D& pos2, const Segment& segment) {
+	Vector3D normal = (pos1 - pos0).Cross(pos2 - pos1).Normalize();
 
-	float distance = pos1.Dot(normal);
+	float distance = pos0.Dot(normal);
 
 	Plane plane;
 	plane.distance = distance;
@@ -130,9 +130,9 @@ bool IsCollisionTriangle(const Vector3D& pos1, const Vector3D& pos2, const Vecto
 
 	Vector3D p = b * t;
 
-	Vector3D cross1 = (pos2 - pos1).Cross(p - pos2);
-	Vector3D cross2 = (pos3 - pos2).Cross(p - pos3);
-	Vector3D cross3 = (pos1 - pos3).Cross(p - pos1);
+	Vector3D cross1 = (pos1 - pos0).Cross(p - pos1);
+	Vector3D cross2 = (pos2 - pos1).Cross(p - pos2);
+	Vector3D cross3 = (pos0 - pos2).Cross(p - pos0);
 
 
 	if (cross1.Dot(normal) >= 0.0f &&
