@@ -25,8 +25,8 @@ private:
 	Mat4x4 viewProjection;
 
 public:
-	int windowWidth;
-	int windowHeight;
+	int32_t windowWidth;
+	int32_t windowHeight;
 
 	Vector3D pos;
 	Vector3D scale;

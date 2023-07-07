@@ -76,7 +76,13 @@ float Vector3D::Length() const {
 Vector3D Vector3D::Normalize() const {
 	float nor = this->Length();
 
-	return Vector3D(x / nor, y / nor, z / nor);
+	if (nor == 0.0f) {
+		return Vector3D();
+	}
+
+	nor = 1.0f / nor;
+
+	return Vector3D(x * nor, y * nor, z * nor);
 }
 
 float Vector3D::Dot(const Vector3D& vec) const {

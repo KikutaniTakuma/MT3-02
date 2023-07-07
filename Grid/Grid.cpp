@@ -1,5 +1,6 @@
 #include "Grid.h"
 #include "Novice.h"
+#include <cmath>
 
 Grid::Grid():
 	scalar(1.0f, 1.0f, 1.0f),
@@ -117,18 +118,22 @@ bool IsCollisionTriangle(const Vector3D& pos0, const Vector3D& pos1, const Vecto
 
 	Plane plane;
 	plane.distance = distance;
-	plane.normal = normal;
+	plane.normal = Project(normal, pos0).Normalize();
 
-	Vector3D b = segment.diff - segment.origin;
-	b = b.Normalize();
+	Vector3D b = segment.diff;
+	//b = b.Normalize();
 
 	float dot = b.Dot(plane.normal);
 
 	if (dot == 0.0f) { return false; };
 
 	float t = (plane.distance - segment.origin.Dot(plane.normal)) / dot;
+	if (!(0.0f >= t && t <= 1.0f)) {
+		return false;
+	}
 
 	Vector3D p = b * t;
+	p += segment.origin;
 
 	Vector3D cross1 = (pos1 - pos0).Cross(p - pos1);
 	Vector3D cross2 = (pos2 - pos1).Cross(p - pos2);

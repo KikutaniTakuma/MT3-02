@@ -126,12 +126,44 @@ bool MyModel::IsCollision(const Sphere& sphere) const {
 }
 
 bool MyModel::IsCollision(const Segment& segment) const {
-	for (size_t i = 0; i < index.size();) {
-		if (IsCollisionTriangle(vertex[index[i]] * worldMat, vertex[index[i+1]] * worldMat, vertex[index[i+2]] * worldMat, segment)) {
+	Vector3D worldMax = maxLocalPos * MakeMatrixAffin(scale, Vector3D(), pos);
+	Vector3D worldMin = minLocalPos * MakeMatrixAffin(scale, Vector3D(), pos);
+
+	Vector3D b = (segment.diff - segment.origin);
+
+	if (b.x == 0.0f && b.y == 0.0f && b.z == 0.0f) {
+		return false;
+	}
+
+	float tMinX = (worldMin.x - segment.origin.x) / b.x;
+	float tMaxX = (worldMax.x - segment.origin.x) / b.x;
+
+	float tNearX = std::min<float>(tMinX, tMaxX);
+	float tFarX = std::max<float>(tMinX, tMaxX);
+
+	float tMinY = (worldMin.y - segment.origin.y) / b.y;
+	float tMaxY = (worldMax.y - segment.origin.y) / b.y;
+
+	float tNearY = std::min<float>(tMinY, tMaxY);
+	float tFarY = std::max<float>(tMinY, tMaxY);
+
+	float tMinZ = (worldMin.z - segment.origin.z) / b.z;
+	float tMaxZ = (worldMax.z - segment.origin.z) / b.z;
+
+	float tNearZ = std::min<float>(tMinZ, tMaxZ);
+	float tFarZ = std::max<float>(tMinZ, tMaxZ);
+
+	float tMin = std::max<float>(std::max<float>(tNearX, tNearY), tNearZ);
+	float tMax = std::min<float>(std::min<float>(tFarX, tFarY), tFarZ);
+
+	if (((0.0f <= tNearX && tNearX <= 1.0f) || (0.0f <= tFarX && tFarX <= 1.0f))||
+		((0.0f <= tNearY && tNearY <= 1.0f) || (0.0f <= tFarY && tFarY <= 1.0f))||
+		((0.0f <= tNearZ && tNearZ <= 1.0f) || (0.0f <= tFarZ && tFarZ <= 1.0f))) {
+		if (tMin <= tMax) {
 			return true;
 		}
-		i += 3;
 	}
+
 
 	return false;
 }
